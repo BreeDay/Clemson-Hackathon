@@ -1,0 +1,79 @@
+{
+  "current_time": "4:59 AM",
+  "buildings": [
+  {
+      "name": "Watt Family Innovation Center",
+      "restaurants": [
+        {
+          "id":9,
+          "name":"Watt Cafe",
+          "category": 2
+        }
+        ]
+    },
+    {
+      "name": "Hendrix Center",
+      "restaurants": [
+        {
+          "id":0,
+          "name":"Einstein Bagels",
+          "category": 0
+        },
+        {
+          "id":1,
+          "name":"Tiger Grill",
+          "category": 1
+        },{
+          "id":2,
+          "name":"Subway",
+          "category": 1
+        },
+        {
+          "id":3,
+          "name":"Panda Express",
+          "category": 2
+        }
+        ]
+    },
+    {
+      "name": "CORE Campus",
+      "restaurants": [
+        {
+          "id":4,
+          "name":"Which Wich",
+          "category": 0
+        },
+        {
+          "id":5,
+          "name":"Raising Cane's",
+          "category": 0
+        },{
+          "id":6,
+          "name":"Starbucks",
+          "category": 1
+        }
+        ]
+    },
+    {
+      "name": "Chick-fil-a",
+      "restaurants": [
+        {
+          "id":7,
+          "name":"Chick-fil-a",
+          "category": 0
+        }
+        ]
+    },
+	{
+      "name": "Wendy's",
+      "restaurants": [
+        {
+          "id":8,
+          "name":"Wendy's",
+          "category": 2
+        }
+        ]
+    }
+	
+  ]
+}

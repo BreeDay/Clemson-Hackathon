@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Clemson Food Wait Times</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+<link href="pretty.css" rel="stylesheet">
+<link rel="icon" href="favicon.ico" type="image/x-icon" />
+<style>
+
+.purplebar{
+	background-color: #522d80 !important;
+	color: #EEE !important;
+}
+
+.lightpurplebar{
+    background-color: #8755c3 !important;
+	color: #EEE !important;
+}
+
+.orangebar{
+	background-color: #F66733 !important;
+	color: #EEE !important;
+}
+
+.fav_star{
+	cursor: pointer;
+	font-size: xx-large;
+	color: #F66733 !important;
+
+}
+
+
+
+</style>
+</head>
+
+
+<body>
+
+<div class="container-fluid" style="background:url('img/header-bg.jpg'); background-size:cover; background-repeat: no-repeat; padding: 1em; color: #FFF">
+
+<div  class="row justify-content-center">
+<img src="img/logo.png" class="image-fluid img-responsive" style="margin-bottom: 0.5em; max-width: 50%; max-height: 50%">
+</div>
+
+
+<div  class="row justify-content-center">
+<h2 class="text-center">Grub Time</h2>
+</div>
+
+</div>
+
+<hr>
+
+<div class="container">
+
+
+<div class="row">
+
+<!-- The actual snackbar -->
+<div id="snackbar">Wait Times Updated...</div>
+
+	<!-- Display location using geolocation? -->
+	<div class="col-md-7">
+	<b>Current Location</b>: <span id="user_location">???</span><br><br>
+	</div>
+	
+	<!-- Search Box -->
+	<div id="uni-text" class="col-md-5">
+	<form class="form-inline md-form form-sm active-pink active-pink-2 mt-2">
+		<i class="fas fa-search" aria-hidden="true"></i>
+		<input class="form-control form-control-sm ml-3 w-75" type="text" placeholder="Search" aria-label="Search" onkeyup="updateList(this.value)" list="optiones" id="searchtext">
+	</form>
+	
+	<datalist id="optiones"></datalist>
+	</div>
+
+</div>
+
+
+
+
+
+<div class="row">
+
+	<div id="uni-map" class="col-md-7 d-none d-md-block">
+		<div id="map" style="width:100%;height:400px;"></div>
+
+	</div>
+
+	<div id="uni-text" class="col-md-5 col-sm-12">
+
+	
+		
+	<br>
+	Last Updated: <b id="current_time"></b>
+	<br><br>
+	
+	<div class="accordion md-accordion" id="res_favs" role="tablist" aria-multiselectable="true">
+	<div class="card">
+	<div class="card-header orangebar" role="tab" id="headingA">
+	<a class="orangebar" data-toggle="collapse" data-parent="#res_favs" href="#collapseA" aria-expanded="true" aria-controls="collapseA"><h5 class="mb-0">Favorites <i class="fas fa-angle-down rotate-icon"></i></h5></a></div><div id="collapseA" class="collapse show" role="tabpanel" aria-labelledby="headingA" data-parent="#res_favs" style=""><div class="card-body">
+	
+	<!-- Snapchap section -->
+	<div class="text-center" id="logout">Log-in to see your favorites!<br></div>
+	<div id="snapchat">
+	</div>
+	
+	<div id="favorites_list">
+	
+	</div>
+	
+	</div></div></div>
+	</div>
+	
+	
+
+	<hr>
+	
+	
+	
+	<div class="accordion md-accordion" id="res_results" role="tablist" aria-multiselectable="true">
+	</div>
+	
+	
+
+
+	</div>
+
+</div>
+
+</div>
+
+
+    <script>
+       window.snapKitInit = function () {
+        var loginButtonIconId = 'snapchat';
+        // Mount Login Button
+        snap.loginkit.mountButton(loginButtonIconId, {
+          clientId: '4399cb98-d621-447d-9129-5d9263cf5a63',
+          redirectURI: 'https://michaelscafemidtown.com/cu/',
+          scopeList: [
+            'user.display_name',
+            'user.bitmoji.avatar',
+          ],
+          handleResponseCallback: function() {
+            snap.loginkit.fetchUserInfo()
+              .then(data => snapchatTest(data)
+			  );
+          },
+        });
+      };
+
+      // Load the SDK asynchronously
+      (function (d, s, id) {
+        var js, sjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "https://sdk.snapkit.com/js/v1/login.js";
+        sjs.parentNode.insertBefore(js, sjs);
+      }(document, 'script', 'loginkit-sdk'));
+    </script>
+
+
+	
+	    <script>
+
+		
+		var map;
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: 34.675911, lng:  -82.83697800000002},
+          zoom: 18
+        });
+      }
+
+  
+    </script>
+
+<script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCm2syJGt6o3WSUXVLHCBL-wy_UWgYQf7Y&callback=initMap" async defer></script>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.bundle.min.js" integrity="sha384-zDnhMsjVZfS3hiP7oCBRmfjkQC4fzxVxFhBx8Hkz2aZX8gEvA/jsP3eXRCvzTofP" crossorigin="anonymous"></script>
+
+
+<script>
+var lastmodified = ""; 
+var temp_modified = "";
+
+var categories = ["< 5 Minutes", "5 - 10 Minutes", "10 - 20 Minutes", "20 - 30 Minutes", "> 30 Minutes"];
+var ratings = ["text-success", "text-warning", "text-danger"];
+
+var favorites_arr = [];
+if(localStorage.getItem('favorites_arr')){ //Retreiving from local storage - because I'm lazy
+	favorites_arr = JSON.parse(localStorage.getItem('favorites_arr'));
+}
+
+var existing_optiones = [];
+
+var show_favorites = 0;
+
+
+
+
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+	setInterval(updatePosition, 360000); //Checks every minute
+  } else {
+
+  }
+
+  
+  function showPosition(position) {
+	document.getElementById("user_location").innerHTML = position.coords.latitude + ", " + position.coords.longitude;
+	
+	var latlng = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+    // This is making the Geocode request
+    var geocoder = new google.maps.Geocoder();
+    geocoder.geocode({ 'latLng': latlng }, function (results, status) {
+        if (status !== google.maps.GeocoderStatus.OK) {
+            alert(status);
+        }
+        // This is checking to see if the Geoeode Status is OK before proceeding
+        if (status == google.maps.GeocoderStatus.OK) {
+            //console.log(results);
+            document.getElementById("user_location").innerHTML = (results[0].formatted_address);
+        }
+    });
+	
+}
+
+
+function updatePosition(){
+	navigator.geolocation.getCurrentPosition(showPosition);
+}
+
+
+//Runs on start to populate list
+updateList("");
+
+fetch('https://michaelscafemidtown.com/cu/datasource.json').then(response => {
+		lastmodified = response.headers.get('Last-Modified')
+	})
+
+setInterval(checkLastMod, 10000); //Checks every minute
+
+
+
+function checkLastMod() {
+
+	fetch('https://michaelscafemidtown.com/cu/datasource.json').then(response => {
+		temp_modified = response.headers.get('Last-Modified')
+		verifyModification()
+	})
+
+}
+
+function verifyModification(){
+	
+	if(temp_modified != lastmodified && lastmodified != ""){
+		
+		updateList("");
+		if(show_favorites == 1){
+			reloadFavorites();
+		}
+		
+        var x = document.getElementById("snackbar");
+		x.className = "show";
+		setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+
+		
+		lastmodified = temp_modified;
+	}
+	
+}
+
+
+function snapchatTest(data){
+
+console.log(data);
+document.getElementById("snapchat").innerHTML = "Welcome back, <i style='font-size:larger'>" + data.data.me.displayName + "</i> | <a href='https://michaelscafemidtown.com/cu/' style='color: #F66733'>Log out</a>";
+
+document.getElementById("logout").innerHTML = "";
+
+show_favorites = 1;
+reloadFavorites();
+
+updateList("");
+
+
+}
+
+
+function favoriting(obj, i, j){
+	
+	if(obj.innerHTML.includes("☆")){
+		obj.innerHTML = "&#9733; ";
+		
+		$.getJSON("datasource.json", function(json) {
+			favorites_arr.push([json["buildings"][i].restaurants[j].id]);
+			localStorage.setItem('favorites_arr', JSON.stringify(favorites_arr));
+			
+			
+			reloadFavorites();
+		});
+		
+		
+		
+	}
+	else{
+		obj.innerHTML = "&#9734; ";
+		$.getJSON("datasource.json", function(json) {
+		
+			for(var k = 0; k < favorites_arr.length; k++){
+				if(favorites_arr[k][0] == json["buildings"][i].restaurants[j].id){
+					favorites_arr.splice(k, 1);
+					break;
+				}
+			
+			}
+		
+		
+			localStorage.setItem('favorites_arr', JSON.stringify(favorites_arr));
+			reloadFavorites();
+		});
+	}
+
+}
+
+
+
+
+
+function reloadFavorites(){
+
+
+var temp_favs = [];
+
+
+$.getJSON("datasource.json", function(json) {
+//...This is terrible, but it works for the demo...
+for(var g = 0; g < favorites_arr.length; g++){
+
+		for(var i = 0; i < json["buildings"].length; i++){
+			for(var j = 0; j < json["buildings"][i].restaurants.length; j++){
+
+				if(favorites_arr[g] == json["buildings"][i].restaurants[j].id){
+				
+					temp_favs.push([json["buildings"][i].restaurants[j].id, json["buildings"][i].restaurants[j].name, json["buildings"][i].restaurants[j].category]);
+				}
+			
+			
+			}
+		}
+
+}
+
+
+
+
+var finalFavs = "<table class='table'>";
+for(var i = 0; i < temp_favs.length; i++){
+	finalFavs += "<tr><td style='padding-top: 1.5em'><b class='" + ratings[temp_favs[i][2]] + "'>&#9632;</b> " + temp_favs[i][1] + "</td> <td style='padding-top: 1.5em'><b>" + categories[temp_favs[i][2]] + "</b></td></tr>";
+}
+document.getElementById("favorites_list").innerHTML = finalFavs + "</table>";
+
+
+});
+
+};
+
+
+
+//Used to reload & filter restaurants
+function updateList(text){
+
+$.getJSON("datasource.json", function(json) {
+	
+	document.getElementById("current_time").innerHTML = json["current_time"];
+	document.getElementById("res_results").innerHTML = "";
+
+	//DATA STRUCTURES (sp)
+	var building_arr = [];
+	var res_arr_arr = [];
+	
+	for(var i = 0; i < json["buildings"].length; i++){
+		building_arr.push(json["buildings"][i].name);
+
+		
+		var res_arr = [];
+		for(var j = 0; j < json["buildings"][i].restaurants.length; j++){
+			res_arr.push(json["buildings"][i].restaurants[j].name);
+		}
+		res_arr_arr.push(res_arr);
+	}
+	
+	//Filtering
+	var remove = true;
+	for(var i = 0; i < building_arr.length; i++){ //BUilding level
+	
+		remove = true;
+		if(!building_arr[i].includes(text)){ //If we haven't searched for a building, go one deeper
+		
+			var temp_arr = res_arr_arr[i];
+			for(var j = 0; j < temp_arr.length; j++){
+				if(temp_arr[j].includes(text)){
+					remove = false;
+				}
+				
+			}			
+		
+		}
+		else{
+			remove = false;
+		}
+		
+		if(remove){
+			building_arr[i] = "";
+		}
+	
+	
+	}
+	
+	
+	var alternate = "light";
+
+	for(var i = 0; i < json["buildings"].length; i++){
+	
+
+	
+	if(building_arr[i] != ""){
+	
+		if(alternate == "light"){
+			alternate = "";
+		}
+		else{
+			alternate = "light";
+		}
+	
+
+	
+		var building_name = "<div class='card'><div class='card-header " + alternate + "purplebar' role='tab' id='heading" + i + "'><a class='" + alternate + "purplebar' data-toggle='collapse' data-parent='#res_results' href='#collapse" + i + "'aria-expanded='true' aria-controls='collapse" + i + "'><h5 class='mb-0'>" + json["buildings"][i].name + " <i class='fas fa-angle-down rotate-icon'></i></h5></a></div>";
+		
+		
+		building_name += "<div id='collapse" + i + "' class='collapse show' role='tabpanel' aria-labelledby='heading" + i + "' data-parent='#res_results'><div class='card-body'><table class='table'>";
+		
+		
+		for(var j = 0; j < json["buildings"][i].restaurants.length; j++){
+		
+		
+		var temp = json["buildings"][i].restaurants[j].name;
+		var starpower = "";
+		if(show_favorites == 1){
+			starpower = "&#9734; ";
+
+			for(var g = 0; g < favorites_arr.length; g++){
+			if(favorites_arr[g][0] == json["buildings"][i].restaurants[j].id){
+				starpower = "&#9733; ";
+			}
+			}
+		}
+		
+		
+		
+			building_name += "<tr><td><span class='fav_star' onclick='favoriting(this, " + i + ", " + j + ")'>" + starpower + "</span></td><td style='padding-top: 1.5em'><b class='" + ratings[json["buildings"][i].restaurants[j].category] + "'>&#9632;</b> " + json["buildings"][i].restaurants[j].name + "</td> <td style='padding-top: 1.5em'><b>" + categories[json["buildings"][i].restaurants[j].category] + "</b></td></tr>";
+			
+		}
+		
+	
+		building_name += "</table></div></div>";
+		document.getElementById("res_results").innerHTML += building_name;
+		
+	}
+	}
+
+});
+
+	
+}
+
+</script>
+
+
+
+
+</body>
+</html>
